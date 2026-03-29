@@ -3,6 +3,7 @@ package com.notifications.notification_service.controller;
 import com.notifications.notification_service.dto.*;
 import com.notifications.notification_service.service.NotificationService;
 import org.springframework.web.bind.annotation.*;
+import com.notifications.notification_service.service.UserService;
 
 @RestController
 @RequestMapping("/api/notifications")
