@@ -7,15 +7,18 @@ import com.notifications.notification_service.dto.NotificationDto;
 import com.notifications.notification_service.entity.Notification;
 import com.notifications.notification_service.enums.*;
 import com.notifications.notification_service.repository.NotificationRepository;
+import com.notifications.notification_service.kafka.NotificationProducer;
 
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
+    private final NotificationProducer notificationProducer;
 
 
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository,NotificationProducer notificationProducer) {
         this.notificationRepository = notificationRepository;
+        this.notificationProducer = notificationProducer;
     }
 
     @Async
@@ -37,6 +40,7 @@ public class NotificationService {
                 .build();
 
         notificationRepository.save(notification);
+        notificationProducer.sendNotification(notificationDto);
         System.out.println("Notification created: "+notification);
 
     }
