@@ -21,15 +21,14 @@ public class NotificationService {
         this.notificationProducer = notificationProducer;
     }
 
-    @Async
-    public void createNotification(NotificationDto notificationDto) {
+    public String createNotification(NotificationDto notificationDto) {
         // notificationRepository.save(notification);
         System.out.println("Received notification request: " + notificationDto);
-        try{
-        Thread.sleep(10000);
-        }catch(InterruptedException e){
-            Thread.currentThread().interrupt();
-        } // Simulate processing time 
+        // try{
+        // Thread.sleep(10000);
+        // }catch(InterruptedException e){
+        //     Thread.currentThread().interrupt();
+        // } // Simulate processing time 
 
         Notification notification = Notification.builder()
                 .userId(notificationDto.getUserId())
@@ -37,12 +36,20 @@ public class NotificationService {
                 .notificationType(NotificationType.valueOf(notificationDto.getType()))
                 .priority(Priority.valueOf(notificationDto.getPriority()))
                 .retryCount(0)
+                .status(NotificationStatus.PENDING)
                 .build();
 
-        notificationRepository.save(notification);
-        notificationProducer.sendNotification(notificationDto);
-        System.out.println("Notification created: "+notification);
+       Notification savedNotification = notificationRepository.save(notification);
+      
+        notificationProducer.sendNotification(notificationDto,savedNotification.getId());
+        System.out.println("Notification created: "+savedNotification);
+        return "Notification created successfully!"+savedNotification.getId();
 
+    }
+
+    public Notification getNotification(Long notificationId) {
+        return notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new RuntimeException("Notification not found with id: " + notificationId));
     }
 
 

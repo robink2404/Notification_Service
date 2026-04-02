@@ -20,9 +20,9 @@ public class UserController {
 
     @PostMapping("/save")
     public String saveUser(@RequestBody UserDto userDto) {
-        userService.saveUser(userDto);
+       String userId = userService.saveUser(userDto);
         System.out.println("User saved: " + userDto);
-        return "User saved successfully!";
+        return "User saved successfully!"+userId;
     }
 
 }

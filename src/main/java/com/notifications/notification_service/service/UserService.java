@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void saveUser(UserDto userDto){
+    public String saveUser(UserDto userDto){
         UserDetail userDetail=UserDetail.builder()
         .emailAddress(userDto.getEmailAddress())
         .phoneNumber(userDto.getPhoneNumber())
@@ -26,8 +26,9 @@ public class UserService {
         userRepository.save(userDetail);
 
         System.out.println("Saved user: " + userDetail);
-        };
-        
+        return userDetail.getUserId();
+    }
+    
 
     }
     
