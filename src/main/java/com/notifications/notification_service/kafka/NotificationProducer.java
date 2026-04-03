@@ -20,6 +20,6 @@ public class NotificationProducer {
         event.setNotificationId(notificationId);
         event.setNotificationDto(notificationDto);
         kafkaTemplate.send("notification-topic", notificationDto.getUserId(), event);
-        System.out.println("Sent notification to Kafka: " + event);
+        // System.out.println("Sent notification to Kafka: " + event);
     }
 }

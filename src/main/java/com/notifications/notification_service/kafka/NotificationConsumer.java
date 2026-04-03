@@ -11,17 +11,22 @@ import com.notifications.notification_service.dto.NotificationEvent;
 import com.notifications.notification_service.enums.NotificationStatus;
 import com.notifications.notification_service.repository.NotificationRepository;
 import com.notifications.notification_service.entity.Notification;
+import com.notifications.notification_service.kafka.NotificationProducer;
+import com.notifications.notification_service.enums.*;
+
 
 @Service
 public class NotificationConsumer {
     private final List<NotificationTypeInterface> senders;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationProducer notificationProducer;
 
-    public NotificationConsumer(List<NotificationTypeInterface> senders, UserRepository userRepository, NotificationRepository notificationRepository) {
+    public NotificationConsumer(List<NotificationTypeInterface> senders, UserRepository userRepository, NotificationRepository notificationRepository, NotificationProducer notificationProducer) {
         this.senders = senders;
         this.userRepository = userRepository;
         this.notificationRepository = notificationRepository;
+        this.notificationProducer = notificationProducer;
     }
     
     @KafkaListener(topics = "notification-topic", groupId = "notification-group")
@@ -51,10 +56,11 @@ public class NotificationConsumer {
                 if (result) {
                     status = NotificationStatus.SUCCESS;
                     logMessage = "Notification sent successfully to " + destination;
-                    System.out.println("Notification sent successfully to " + destination);
+                    // System.out.println("Notification sent successfully to " + destination);
                 } else {
                     logMessage = "Failed to send notification to " + destination;
-                    System.out.println("Failed to send notification to " + destination);    
+                    handleRetry(notification, event);
+                    // System.out.println("Failed to send notification to " + destination);    
                 }
                 break;  // Exit loop after attempting send
             }
@@ -70,5 +76,35 @@ public class NotificationConsumer {
         // Update and save the notification status
         notification.setStatus(status);
         notificationRepository.save(notification);
+    }
+   // ...existing code...
+
+    private void handleRetry(Notification notification, NotificationEvent event) {
+        int retryCount = notification.getRetryCount() + 1;
+        notification.setRetryCount(retryCount);
+        int maxRetry = notification.getPriority() == Priority.HIGH ? 5 : 3;
+
+        if (retryCount > maxRetry) {
+            notification.setStatus(NotificationStatus.FAILED);
+            notificationRepository.save(notification);
+            System.out.println("Max retry attempts reached for notification: " + notification.getId());
+        } else {
+            notification.setStatus(NotificationStatus.PENDING);
+            notificationRepository.save(notification);
+            System.out.println("Scheduling retry " + retryCount + " for notification: " + notification.getId());
+            try {
+                if (notification.getPriority() == Priority.HIGH) {
+                    Thread.sleep(1000);
+                } else {
+                    Thread.sleep(5000);
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Retry sleep interrupted for notification: " + notification.getId());
+            }
+            // Move this INSIDE else block - only retry if count <= maxRetry
+            notificationProducer.sendNotification(event.getNotificationDto(), notification.getId());
+            System.out.println("Retrying notification: " + retryCount + " for notification: " + notification.getId());
+        }
     }
 }

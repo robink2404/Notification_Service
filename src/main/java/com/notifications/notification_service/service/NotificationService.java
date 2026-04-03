@@ -23,7 +23,7 @@ public class NotificationService {
 
     public String createNotification(NotificationDto notificationDto) {
         // notificationRepository.save(notification);
-        System.out.println("Received notification request: " + notificationDto);
+        // System.out.println("Received notification request: " + notificationDto);
         // try{
         // Thread.sleep(10000);
         // }catch(InterruptedException e){
@@ -42,7 +42,7 @@ public class NotificationService {
        Notification savedNotification = notificationRepository.save(notification);
       
         notificationProducer.sendNotification(notificationDto,savedNotification.getId());
-        System.out.println("Notification created: "+savedNotification);
+        // System.out.println("Notification created: "+savedNotification);
         return "Notification created successfully!"+savedNotification.getId();
 
     }
