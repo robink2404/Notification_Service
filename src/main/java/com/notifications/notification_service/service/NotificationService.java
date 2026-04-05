@@ -45,7 +45,7 @@ public class NotificationService {
 
        Notification savedNotification = notificationRepository.save(notification);
       
-        notificationProducer.sendNotification(notificationDto,savedNotification.getId());
+        notificationProducer.sendNotification("notification-topic",notificationDto,savedNotification.getId());
         // System.out.println("Notification created: "+savedNotification);
             log.info("Notification created: " + savedNotification);
         return "Notification created successfully!"+savedNotification.getId();

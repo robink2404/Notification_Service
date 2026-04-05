@@ -18,11 +18,11 @@ public class NotificationProducer {
       this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendNotification(NotificationDto notificationDto, Long notificationId) {
+    public void sendNotification(String topic,NotificationDto notificationDto, Long notificationId) {
         NotificationEvent event = new NotificationEvent();
         event.setNotificationId(notificationId);
         event.setNotificationDto(notificationDto);
-        kafkaTemplate.send("notification-topic", notificationDto.getUserId(), event);
+        kafkaTemplate.send(topic, notificationDto.getUserId(), event);
         // System.out.println("Sent notification to Kafka: " + event);
         log.info("Sent notification to Kafka: " + event);
     }
