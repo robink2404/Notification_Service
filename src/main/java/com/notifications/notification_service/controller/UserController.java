@@ -7,12 +7,15 @@ import com.notifications.notification_service.service.UserService;
 import com.notifications.notification_service.dto.UserDto;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
     
    private final UserService userService;
+   private static final Logger logger=LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -21,7 +24,7 @@ public class UserController {
     @PostMapping("/save")
     public String saveUser(@RequestBody UserDto userDto) {
        String userId = userService.saveUser(userDto);
-        System.out.println("User saved: " + userDto);
+        logger.info("User saved: " + userDto);
         return "User saved successfully!"+userId;
     }
 

@@ -7,11 +7,14 @@ import org.springframework.stereotype.Service;
 import com.notifications.notification_service.dto.UserDto;
 import com.notifications.notification_service.entity.UserDetail;
 import com.notifications.notification_service.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class UserService {
 
    private final UserRepository userRepository;
+   private static final Logger logger=LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -24,8 +27,7 @@ public class UserService {
         .build();
 
         userRepository.save(userDetail);
-
-        System.out.println("Saved user: " + userDetail);
+        logger.info("Saved user: " + userDetail);
         return userDetail.getUserId();
     }
     

@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import com.notifications.notification_service.entity.UserDetail;
 import com.notifications.notification_service.repository.UserRepository;
 import com.notifications.notification_service.service.NotificationTypeInterface;
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import com.notifications.notification_service.dto.NotificationEvent;
 import com.notifications.notification_service.enums.NotificationStatus;
@@ -16,6 +19,7 @@ import com.notifications.notification_service.enums.*;
 
 
 @Service
+@Slf4j
 public class NotificationConsumer {
     private final List<NotificationTypeInterface> senders;
     private final UserRepository userRepository;
@@ -33,7 +37,8 @@ public class NotificationConsumer {
     public void consume(NotificationEvent event) {
         Long notificationId = event.getNotificationId();
         NotificationDto notificationDto = event.getNotificationDto();
-        System.out.println("Consumed notification from Kafka: " + notificationDto);
+        // System.out.println("Consumed notification from Kafka: " + notificationDto);
+        log.info("Consumed notification from Kafka: " + notificationDto);
         
         UserDetail user = userRepository.findById(notificationDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -56,9 +61,11 @@ public class NotificationConsumer {
                 if (result) {
                     status = NotificationStatus.SUCCESS;
                     logMessage = "Notification sent successfully to " + destination;
+                    log.info(logMessage);
                     // System.out.println("Notification sent successfully to " + destination);
                 } else {
                     logMessage = "Failed to send notification to " + destination;
+                    log.error(logMessage);
                     handleRetry(notification, event);
                     // System.out.println("Failed to send notification to " + destination);    
                 }

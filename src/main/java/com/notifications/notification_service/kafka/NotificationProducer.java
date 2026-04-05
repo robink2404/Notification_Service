@@ -5,9 +5,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 import com.notifications.notification_service.dto.NotificationEvent;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.notifications.notification_service.dto.NotificationDto;
 
 @Component
+@Slf4j
 public class NotificationProducer {
     private final KafkaTemplate<String, NotificationEvent> kafkaTemplate;
 
@@ -21,5 +24,6 @@ public class NotificationProducer {
         event.setNotificationDto(notificationDto);
         kafkaTemplate.send("notification-topic", notificationDto.getUserId(), event);
         // System.out.println("Sent notification to Kafka: " + event);
+        log.info("Sent notification to Kafka: " + event);
     }
 }

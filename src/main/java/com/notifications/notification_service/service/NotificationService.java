@@ -7,9 +7,13 @@ import com.notifications.notification_service.dto.NotificationDto;
 import com.notifications.notification_service.entity.Notification;
 import com.notifications.notification_service.enums.*;
 import com.notifications.notification_service.repository.NotificationRepository;
+
+import lombok.extern.slf4j.Slf4j;
+
 import com.notifications.notification_service.kafka.NotificationProducer;
 
 @Service
+@Slf4j
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationProducer notificationProducer;
@@ -43,6 +47,7 @@ public class NotificationService {
       
         notificationProducer.sendNotification(notificationDto,savedNotification.getId());
         // System.out.println("Notification created: "+savedNotification);
+            log.info("Notification created: " + savedNotification);
         return "Notification created successfully!"+savedNotification.getId();
 
     }
