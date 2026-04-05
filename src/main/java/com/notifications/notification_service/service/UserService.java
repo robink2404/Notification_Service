@@ -1,6 +1,9 @@
 package com.notifications.notification_service.service;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.catalina.User;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.user.UserDestinationResolver;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +18,12 @@ public class UserService {
 
    private final UserRepository userRepository;
    private static final Logger logger=LoggerFactory.getLogger(UserService.class);
+   private final RedisTemplate<String,String> redisTemplate;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RedisTemplate<String,String> redisTemplate) {
         this.userRepository = userRepository;
+        this.redisTemplate = redisTemplate;
+
     }
 
     public String saveUser(UserDto userDto){
@@ -27,8 +33,31 @@ public class UserService {
         .build();
 
         userRepository.save(userDetail);
+       
+        String userId=userDetail.getUserId();
+          String key="user:"+userId;
+        String value=userDetail.getEmailAddress()+"|"+userDetail.getPhoneNumber();
+         redisTemplate.opsForValue().set(
+                key,
+                value,
+                10, TimeUnit.MINUTES   // TTL (optional but recommended)
+        );
         logger.info("Saved user: " + userDetail);
         return userDetail.getUserId();
+    }
+
+    public String checkUserinRedis(String userId){
+       
+
+        String value=redisTemplate.opsForValue().get("user:" + userId);
+        if(value!=null){
+            logger.info("User found in Redis cache: " + userId);
+            return value;
+        }else{
+            logger.info("User not found in Redis cache: " + userId);
+            return null;
+        }
+
     }
     
 

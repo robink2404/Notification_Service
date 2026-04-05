@@ -5,6 +5,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.notifications.notification_service.service.UserService;
 import com.notifications.notification_service.dto.UserDto;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.slf4j.Logger;
@@ -26,6 +29,15 @@ public class UserController {
        String userId = userService.saveUser(userDto);
         logger.info("User saved: " + userDto);
         return "User saved successfully!"+userId;
+    }
+    @GetMapping("/check/{userId}")
+    public String checkUserInRedis(@PathVariable String userId){
+        String value=userService.checkUserinRedis(userId);
+        if(value!=null){
+            return "User found in Redis cache: " + userId+" with value: "+value;
+        }else{
+            return "User not found in Redis cache: " + userId;
+        }
     }
 
 }
