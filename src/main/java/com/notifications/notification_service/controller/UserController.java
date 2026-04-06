@@ -1,9 +1,11 @@
 package com.notifications.notification_service.controller;
 import org.apache.catalina.User;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.notifications.notification_service.service.UserService;
+import com.notifications.notification_service.dto.ApiResponse;
 import com.notifications.notification_service.dto.UserDto;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,19 +27,27 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public String saveUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<String>> saveUser(@RequestBody UserDto userDto) {
        String userId = userService.saveUser(userDto);
         logger.info("User saved: " + userDto);
-        return "User saved successfully!"+userId;
+        ApiResponse<String> response = new ApiResponse<>(
+            true,
+            "User saved successfully",
+            userId,
+            "USER_SAVED"
+        );
+        return ResponseEntity.status(200).body(response);
     }
     @GetMapping("/check/{userId}")
-    public String checkUserInRedis(@PathVariable String userId){
+    public ResponseEntity<ApiResponse<String>> checkUserInRedis(@PathVariable String userId){
         String value=userService.checkUserinRedis(userId);
-        if(value!=null){
-            return "User found in Redis cache: " + userId+" with value: "+value;
-        }else{
-            return "User not found in Redis cache: " + userId;
-        }
+        ApiResponse<String> response=new ApiResponse<>(
+            true,
+            "User found in cache",
+            value,
+            "USER_FOUND"
+        );
+        return ResponseEntity.ok(response);
     }
 
 }
