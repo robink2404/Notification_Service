@@ -2,6 +2,8 @@ package com.notifications.notification_service.controller;
 
 import com.notifications.notification_service.dto.*;
 import com.notifications.notification_service.service.NotificationService;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.notifications.notification_service.service.UserService;
 
@@ -21,11 +23,11 @@ public class NotificationController {
     }
 
     @PostMapping("/send")
-    public String sendNotification(@RequestBody NotificationDto  request) {
+    public ResponseEntity<ApiResponse<String>> sendNotification(@RequestBody NotificationDto  request) {
         // NotificationService notificationService=new NotificationService(null);
        String resuString= notificationService.createNotification(request);    
          
         log.info("Notification request processed: " + request);
-        return resuString;
+        return ResponseEntity.ok(new ApiResponse<>(true, "Notification sent successfully", resuString, null));
     }
 }

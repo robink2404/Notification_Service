@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.notifications.notification_service.dto.NotificationDto;
+import com.notifications.notification_service.dto.RateLimitExceedException;
 import com.notifications.notification_service.dto.UserNotFoundException;
 import com.notifications.notification_service.entity.Notification;
 import com.notifications.notification_service.entity.UserDetail;
@@ -67,7 +68,7 @@ public class NotificationService {
 
         if(!rateLimiterService.isAllowed(UserId)){
             log.warn("Rate limit exceeded for userId: {}", UserId);
-        return "Rate limit exceeded (max 2 notifications per minute)";
+            throw new RateLimitExceedException("Rate limit exceeded for userId: " + UserId);
         }
 
 
