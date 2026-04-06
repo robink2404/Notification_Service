@@ -8,6 +8,7 @@ import com.notifications.notification_service.dto.NotificationDto;
 import com.notifications.notification_service.entity.Notification;
 import com.notifications.notification_service.enums.*;
 import com.notifications.notification_service.repository.NotificationRepository;
+import com.notifications.notification_service.service.RateLimiterService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,10 +20,12 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationProducer notificationProducer;
     private final RedisTemplate<String,String> redisTemplate;
+    private final RateLimiterService rateLimiterService;
 
 
 
-    public NotificationService(NotificationRepository notificationRepository,NotificationProducer notificationProducer,RedisTemplate<String,String> redisTemplate) {
+    public NotificationService(NotificationRepository notificationRepository,NotificationProducer notificationProducer,RedisTemplate<String,String> redisTemplate,RateLimiterService rateLimiterService) {
+         this.rateLimiterService=rateLimiterService;        
         this.notificationRepository = notificationRepository;
         this.notificationProducer = notificationProducer;
         this.redisTemplate = redisTemplate;
@@ -43,6 +46,11 @@ public class NotificationService {
         return "User data not found in Redis for userId: " + UserId;
        }
         log.info("User data retrieved from Redis for userId: " + UserId);
+
+        if(!rateLimiterService.isAllowed(UserId)){
+            log.warn("Rate limit exceeded for userId: {}", UserId);
+        return "Rate limit exceeded (max 2 notifications per minute)";
+        }
 
 
 
