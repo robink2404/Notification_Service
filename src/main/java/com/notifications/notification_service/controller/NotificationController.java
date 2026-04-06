@@ -9,7 +9,8 @@ import com.notifications.notification_service.service.UserService;
 
 import lombok.extern.slf4j.Slf4j;
 
-import com.notifications.notification_service.entity.Notification;  
+import com.notifications.notification_service.entity.Notification;
+import com.notifications.notification_service.response.ApiResponse;  
 
 @RestController     
 @RequestMapping("/api/notifications")

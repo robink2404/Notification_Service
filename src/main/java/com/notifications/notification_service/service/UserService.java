@@ -9,7 +9,7 @@ import org.springframework.messaging.simp.user.UserDestinationResolver;
 import org.springframework.stereotype.Service;
 
 import com.notifications.notification_service.dto.UserDto;
-import com.notifications.notification_service.dto.UserNotFoundException;
+import com.notifications.notification_service.response.UserNotFoundException;
 import com.notifications.notification_service.entity.UserDetail;
 import com.notifications.notification_service.repository.UserRepository;
 import org.slf4j.Logger;

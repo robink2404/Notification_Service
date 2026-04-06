@@ -1,4 +1,4 @@
-package com.notifications.notification_service.dto;
+package com.notifications.notification_service.response;
 
 public class UserNotFoundException extends RuntimeException {
     

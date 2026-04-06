@@ -1,4 +1,4 @@
-package com.notifications.notification_service.dto;
+package com.notifications.notification_service.response;
 
 import org.apache.kafka.shaded.com.google.protobuf.Api;
 import org.springframework.http.HttpStatus;

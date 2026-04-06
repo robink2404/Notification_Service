@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.notifications.notification_service.service.UserService;
-import com.notifications.notification_service.dto.ApiResponse;
+import com.notifications.notification_service.response.ApiResponse;
 import com.notifications.notification_service.dto.UserDto;
 
 import org.springframework.web.bind.annotation.GetMapping;

@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import com.notifications.notification_service.dto.NotificationDto;
-import com.notifications.notification_service.dto.RateLimitExceedException;
-import com.notifications.notification_service.dto.UserNotFoundException;
+import com.notifications.notification_service.response.RateLimitExceedException;
+import com.notifications.notification_service.response.UserNotFoundException;
 import com.notifications.notification_service.entity.Notification;
 import com.notifications.notification_service.entity.UserDetail;
 import com.notifications.notification_service.enums.*;
